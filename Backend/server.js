@@ -2,7 +2,7 @@ var express = require("express");
 var login = require("./routes/loginroutes");
 var bodyParser = require("body-parser");
 var app = express();
-const users = require("./data/users");
+const loginroutes = require("./routes/loginroutes");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -14,37 +14,7 @@ app.use(function(req, res, next) {
   );
   next();
 });
+app.use("/api", loginroutes);
 
-var router = express.Router();
-// test route
-router.get("/", function(req, res) {
-  res.json({ message: "welcome to our upload module apis" });
-});
-
-//route to handle user registration
-//test to get all of the users
-router.get("/users", (req, res) => {
-  res.send(users);
-});
-//router.post('/register', login.register);
-router.post("/register", function(req, res) {
-  const user = {
-    id: users.length,
-    username: req.body.username,
-    password: req.body.password
-  };
-  users.push(user);
-  res.send(user);
-});
-//router.post('/login', login.login)
-router.post("/login", function(req, res) {
-  const user = users.find(c => c.username === req.body.username);
-  if (!user) return res.status(404).send("Username Wrong");
-  if (user.password != req.body.password)
-    return res.status(404).send("Password Wrong");
-
-  res.send(user);
-});
-
-app.use("/api", router);
-app.listen(5000);
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Listening on port ${port}...`));
